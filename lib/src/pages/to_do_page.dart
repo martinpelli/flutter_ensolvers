@@ -8,10 +8,10 @@ class ToDoPage extends StatefulWidget {
 }
 
 class _ToDoPageState extends State<ToDoPage> {
-  bool _isChecked = false;
   TextStyle _cancelStyle = TextStyle(color: Colors.red);
   String _taskTitle = 'Unnamed Task';
   List<Widget> _tasksList = [];
+  bool _isChecked = false;
   final textFieldController = TextEditingController();
 
   @override
@@ -67,28 +67,32 @@ class _ToDoPageState extends State<ToDoPage> {
       _tasksList.add(Padding(padding: EdgeInsets.all(5)));
       textFieldController.text = '';
       _taskTitle = 'Unnamed Task';
+      _isChecked = false;
     });
   }
 
-  ListTile _newTask() {
-    return ListTile(
-      tileColor: Colors.white,
-      title: Text(_taskTitle),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(5))),
-      leading: Checkbox(
-        value: _isChecked,
-        onChanged: (bool? newValue) {
-          setState(() {
-            _isChecked = newValue!;
-          });
-        },
-      ),
-      trailing: TextButton(
-        child: Icon(Icons.edit),
-        onPressed: () => _showAlert(context),
-      ),
-    );
+  StatefulBuilder _newTask() {
+    return StatefulBuilder(
+        builder: (BuildContext context, StateSetter setState) {
+      return ListTile(
+        tileColor: Colors.white,
+        title: Text(_taskTitle),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(5))),
+        leading: Checkbox(
+          value: _isChecked,
+          onChanged: (bool? newValue) {
+            setState(() {
+              _isChecked = newValue!;
+            });
+          },
+        ),
+        trailing: TextButton(
+          child: Icon(Icons.edit),
+          onPressed: () => _showAlert(context),
+        ),
+      );
+    });
   }
 
   void _showAlert(BuildContext context) {
