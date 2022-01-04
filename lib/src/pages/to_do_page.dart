@@ -66,7 +66,6 @@ class _ToDoPageState extends State<ToDoPage> {
       _tasksList.add(_newTask());
       _tasksList.add(Padding(padding: EdgeInsets.all(5)));
       textFieldController.text = '';
-      _taskTitle = 'Unnamed Task';
       _isChecked = false;
     });
   }
