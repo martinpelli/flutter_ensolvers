@@ -8,8 +8,9 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Center(child: Text('Ensolvers App'))),
       body: Container(
+        padding: EdgeInsets.all(30),
         child: Column(
-          children: [
+          children: <ListTile>[
             ListTile(
               tileColor: Colors.black12,
               title: Text('To-Do List'),
@@ -21,7 +22,6 @@ class HomePage extends StatelessWidget {
             )
           ],
         ),
-        padding: EdgeInsets.all(30),
       ),
     );
   }
