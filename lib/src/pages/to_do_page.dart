@@ -9,6 +9,8 @@ class ToDoPage extends StatefulWidget {
 
 class _ToDoPageState extends State<ToDoPage> {
   bool _isChecked = false;
+  TextStyle _cancelStyle = TextStyle(color: Colors.red);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +22,9 @@ class _ToDoPageState extends State<ToDoPage> {
             children: <Widget>[
               _newTask(),
               Padding(padding: EdgeInsets.all(5.0)),
-              _newTask()
+              _newTask(),
+              Padding(padding: EdgeInsets.all(5.0)),
+              _newCreationTask(),
             ],
           ),
         ),
@@ -31,7 +35,7 @@ class _ToDoPageState extends State<ToDoPage> {
   ListTile _newTask() {
     return ListTile(
       tileColor: Colors.white,
-      title: Text('Mi primera tarea'),
+      title: Text('Task'),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
       leading: Checkbox(
@@ -44,8 +48,43 @@ class _ToDoPageState extends State<ToDoPage> {
       ),
       trailing: TextButton(
         child: Icon(Icons.edit),
-        onPressed: () {},
+        onPressed: () => _showAlert(context),
       ),
     );
+  }
+
+  ListTile _newCreationTask() {
+    return ListTile(
+        title: TextField(),
+        trailing: TextButton(onPressed: () {}, child: Text('Add Task')));
+  }
+
+  void _showAlert(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text('Editing Task'),
+              content:
+                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                TextField(),
+                Padding(padding: EdgeInsets.all(10.0)),
+                Row(
+                  children: <TextButton>[
+                    TextButton(onPressed: () {}, child: Text('Confirm')),
+                    TextButton(
+                        onPressed: () => _onCancelClicked(context),
+                        child: Text(
+                          'Cancel',
+                          style: _cancelStyle,
+                        ))
+                  ],
+                )
+              ]));
+        });
+  }
+
+  void _onCancelClicked(BuildContext context) {
+    Navigator.of(context).pop();
   }
 }
