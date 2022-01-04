@@ -14,18 +14,35 @@ class _ToDoPageState extends State<ToDoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('To-do List')),
-      body: Container(
-        padding: EdgeInsets.all(30),
-        child: Center(
-          child: Column(
-            children: <Widget>[
-              _newTask(),
-              Padding(padding: EdgeInsets.all(5.0)),
-              _newTask(),
-              Padding(padding: EdgeInsets.all(5.0)),
-              _newCreationTask(),
-            ],
+      appBar: AppBar(
+          automaticallyImplyLeading: false, // Don't show the leading button
+          title: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: Icon(Icons.arrow_back, color: Colors.white),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 300),
+                  child: Text('To-Do List'),
+                )
+              ])),
+      body: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 500),
+          padding: EdgeInsets.all(30),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                _newTask(),
+                Padding(padding: EdgeInsets.all(5.0)),
+                _newTask(),
+                Padding(padding: EdgeInsets.all(5.0)),
+                _newCreationTask(),
+              ],
+            ),
           ),
         ),
       ),
