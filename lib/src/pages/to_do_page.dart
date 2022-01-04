@@ -10,6 +10,9 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage> {
   bool _isChecked = false;
   TextStyle _cancelStyle = TextStyle(color: Colors.red);
+  String _taskTitle = 'Unnamed Task';
+  List<Widget> _tasksList = [];
+  final textFieldController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -34,25 +37,43 @@ class _ToDoPageState extends State<ToDoPage> {
           constraints: BoxConstraints(maxWidth: 500),
           padding: EdgeInsets.all(30),
           child: Center(
-            child: Column(
-              children: <Widget>[
-                _newTask(),
-                Padding(padding: EdgeInsets.all(5.0)),
-                _newTask(),
-                Padding(padding: EdgeInsets.all(5.0)),
-                _newCreationTask(),
-              ],
-            ),
+            child: Column(children: [
+              Column(children: _tasksList),
+              _newTaskCreatorTile()
+            ]),
           ),
         ),
       ),
     );
   }
 
+  ListTile _newTaskCreatorTile() {
+    return ListTile(
+        title: TextField(
+          controller: textFieldController,
+          decoration: InputDecoration(labelText: 'New Task'),
+        ),
+        trailing: TextButton(
+            onPressed: () => _createNewTask(), child: Text('Add Task')));
+  }
+
+  void _createNewTask() {
+    _taskTitle = textFieldController.text;
+    if (_taskTitle.isEmpty) {
+      _taskTitle = 'Unnamed Task';
+    }
+    setState(() {
+      _tasksList.add(_newTask());
+      _tasksList.add(Padding(padding: EdgeInsets.all(5)));
+      textFieldController.text = '';
+      _taskTitle = 'Unnamed Task';
+    });
+  }
+
   ListTile _newTask() {
     return ListTile(
       tileColor: Colors.white,
-      title: Text('Task'),
+      title: Text(_taskTitle),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
       leading: Checkbox(
@@ -68,12 +89,6 @@ class _ToDoPageState extends State<ToDoPage> {
         onPressed: () => _showAlert(context),
       ),
     );
-  }
-
-  ListTile _newCreationTask() {
-    return ListTile(
-        title: TextField(),
-        trailing: TextButton(onPressed: () {}, child: Text('Add Task')));
   }
 
   void _showAlert(BuildContext context) {
