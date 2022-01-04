@@ -12,7 +12,8 @@ class _ToDoPageState extends State<ToDoPage> {
   String _taskTitle = 'Unnamed Task';
   List<Widget> _tasksList = [];
   bool _isChecked = false;
-  final textFieldController = TextEditingController();
+  final textFieldCreatorController = TextEditingController();
+  final textFieldEditorController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +51,7 @@ class _ToDoPageState extends State<ToDoPage> {
   ListTile _newTaskCreatorTile() {
     return ListTile(
         title: TextField(
-          controller: textFieldController,
+          controller: textFieldCreatorController,
           decoration: InputDecoration(labelText: 'New Task'),
         ),
         trailing: TextButton(
@@ -58,14 +59,14 @@ class _ToDoPageState extends State<ToDoPage> {
   }
 
   void _createNewTask() {
-    _taskTitle = textFieldController.text;
+    _taskTitle = textFieldCreatorController.text;
     if (_taskTitle.isEmpty) {
       _taskTitle = 'Unnamed Task';
     }
     setState(() {
       _tasksList.add(_newTask());
       _tasksList.add(Padding(padding: EdgeInsets.all(5)));
-      textFieldController.text = '';
+      textFieldCreatorController.text = '';
       _isChecked = false;
     });
   }
@@ -88,38 +89,48 @@ class _ToDoPageState extends State<ToDoPage> {
         ),
         trailing: TextButton(
           child: Icon(Icons.edit),
-          onPressed: () => _showAlert(context),
+          onPressed: () async {
+            await _editTask(context);
+            setState(() {});
+          },
         ),
       );
     });
   }
 
-  void _showAlert(BuildContext context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text('Editing Task'),
-              content:
-                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                TextField(),
-                Padding(padding: EdgeInsets.all(10.0)),
-                Row(
-                  children: <TextButton>[
-                    TextButton(onPressed: () {}, child: Text('Confirm')),
-                    TextButton(
-                        onPressed: () => _onCancelClicked(context),
-                        child: Text(
-                          'Cancel',
-                          style: _cancelStyle,
-                        ))
-                  ],
-                )
-              ]));
-        });
+  Future _editTask(BuildContext context) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          title: Text('Editing Task "${_taskTitle}"'),
+          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            TextField(
+              decoration: InputDecoration(labelText: 'Edit Task'),
+              controller: textFieldEditorController,
+            ),
+            Padding(padding: EdgeInsets.all(10.0)),
+            Row(
+              children: <TextButton>[
+                TextButton(
+                    onPressed: () => _onConfirmEditTaskClicked(context),
+                    child: Text('Confirm')),
+                TextButton(
+                    onPressed: () => _onCancelEditTaskClicked(context),
+                    child: Text(
+                      'Cancel',
+                      style: _cancelStyle,
+                    ))
+              ],
+            )
+          ])));
+
+  void _onCancelEditTaskClicked(BuildContext context) {
+    Navigator.of(context).pop();
   }
 
-  void _onCancelClicked(BuildContext context) {
-    Navigator.of(context).pop();
+  void _onConfirmEditTaskClicked(BuildContext context) {
+    setState(() {
+      _taskTitle = textFieldEditorController.text;
+      Navigator.of(context).pop();
+    });
   }
 }
