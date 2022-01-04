@@ -60,9 +60,7 @@ class _ToDoPageState extends State<ToDoPage> {
 
   void _createNewTask() {
     _taskTitle = textFieldCreatorController.text;
-    if (_taskTitle.isEmpty) {
-      _taskTitle = 'Unnamed Task';
-    }
+    _setUnnamedTaskIfEmpty();
     setState(() {
       _tasksList.add(_newTask());
       _tasksList.add(Padding(padding: EdgeInsets.all(5)));
@@ -130,7 +128,15 @@ class _ToDoPageState extends State<ToDoPage> {
   void _onConfirmEditTaskClicked(BuildContext context) {
     setState(() {
       _taskTitle = textFieldEditorController.text;
+      _setUnnamedTaskIfEmpty();
       Navigator.of(context).pop();
     });
+    textFieldEditorController.text = '';
+  }
+
+  void _setUnnamedTaskIfEmpty() {
+    if (_taskTitle.isEmpty) {
+      _taskTitle = 'Unnamed Task';
+    }
   }
 }
