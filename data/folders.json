@@ -1,0 +1,13 @@
+{
+    "serverName" : "Kid Cuddi",
+    "tasks" : [
+        {
+            "title" : "Things to do at Home",
+            "key": "0"
+        },
+        {
+            "title" : "Things to do at Work",
+            "key": "1"
+        }
+    ]
+}

@@ -1,0 +1,25 @@
+{
+    "serverName" : "Kid Cuddi",
+    "tasks" : [
+        {
+            "title" : "Buy Pepsi not Coke",
+            "checked" : "true",
+            "key": "0"
+        },
+        {
+            "title" : "Sit up stright",
+            "checked" : "false",
+            "key": "12"
+        },
+        {
+            "title" : "Make at least 1 friend",
+            "checked" : "false",
+            "key": "4"
+        },
+        {
+            "title" : "Win La Libertadores",
+            "checked" : "false",
+            "key": "244"
+        }
+    ]
+}
