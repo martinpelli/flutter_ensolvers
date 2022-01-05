@@ -6,10 +6,10 @@ class _DataProvider {
   List<dynamic> _dataObjects = [];
   _DataProvider() {}
 
-  Future<List<dynamic>> loadData(String dataFileName) async {
-    final response = await rootBundle.loadString('data/${dataFileName}.json');
+  Future<List<dynamic>> loadData() async {
+    final response = await rootBundle.loadString('data/folders.json');
     Map dataMap = json.decode(response);
-    _dataObjects = dataMap[dataFileName];
+    _dataObjects = dataMap['folders'];
     return _dataObjects;
   }
 }

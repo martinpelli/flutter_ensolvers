@@ -16,7 +16,7 @@ class _FoldersPageState extends State<FoldersPage> {
   final _textFieldCreatorController = TextEditingController();
 
   _FoldersPageState() {
-    dataProvider.loadData("folders").then((data) {
+    dataProvider.loadData().then((data) {
       data.forEach((property) {
         FolderDto _newFolderDto = FolderDto(
             property['title'], Key(property['key']), property['tasks']);
