@@ -1,24 +1,38 @@
 import 'package:flutter/material.dart';
 
-class ToDoPage extends StatefulWidget {
-  final List<Widget> _tasksList = [];
+import 'package:flutter_ensolvers/src/DTOs/task_dto.dart';
 
-  ToDoPage(_tasksLits, {Key? key}) : super(key: key);
+class ToDoPage extends StatefulWidget {
+  const ToDoPage({Key? key}) : super(key: key);
 
   @override
-  State<ToDoPage> createState() => _ToDoPageState(_tasksList);
+  State<ToDoPage> createState() => _ToDoPageState();
 }
 
 class _ToDoPageState extends State<ToDoPage> {
   String _taskTitle = 'Unnamed Task';
-  final List<Widget> _tasksList;
+  final List<Widget> _tasksList = [];
   int _index = 0;
-  bool _isChecked = false;
   bool _wasEdited = false;
   final _textFieldCreatorController = TextEditingController();
   final _textFieldEditorController = TextEditingController();
 
-  _ToDoPageState(this._tasksList);
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) => _loadTasks());
+  }
+
+  void _loadTasks() {
+    final tasks = ModalRoute.of(context)?.settings.arguments as List<dynamic>;
+    tasks.forEach((property) {
+      TaskDto _newTaskDto = TaskDto(property['title'],
+          property['checked'].toLowerCase() == 'true', Key(property['key']));
+      _taskTitle = _newTaskDto.getTaskTitle();
+      _tasksList.add(_newTask(
+          _newTaskDto.getKey(), _taskTitle, _newTaskDto.getIsChecked()));
+    });
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,26 +83,25 @@ class _ToDoPageState extends State<ToDoPage> {
     _setUnnamedTaskIfEmpty();
     setState(() {
       _taskTitle = _textFieldCreatorController.text;
-      _tasksList.add(_newTask(newKey, _taskTitle));
+      _tasksList.add(_newTask(newKey, _taskTitle, false));
       _textFieldCreatorController.text = '';
-      _isChecked = false;
     });
   }
 
-  StatefulBuilder _newTask(Key newkey, String taskTitle) {
+  StatefulBuilder _newTask(Key newkey, String taskTitle, isChecked) {
     return StatefulBuilder(
         key: newkey,
         builder: (BuildContext context, StateSetter setState) {
           return ListTile(
             tileColor: Colors.white,
-            title: Text(_taskTitle),
+            title: Text(taskTitle),
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5))),
             leading: Checkbox(
-              value: _isChecked,
+              value: isChecked,
               onChanged: (bool? newValue) {
                 setState(() {
-                  _isChecked = newValue!;
+                  isChecked = newValue!;
                   _taskTitle = taskTitle;
                 });
               },

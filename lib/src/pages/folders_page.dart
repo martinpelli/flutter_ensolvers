@@ -1,16 +1,33 @@
 import 'package:flutter/material.dart';
 
+import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
+import 'package:flutter_ensolvers/src/providers/data_provider.dart';
+
 class FoldersPage extends StatefulWidget {
   @override
   State<FoldersPage> createState() => _FoldersPageState();
 }
 
 class _FoldersPageState extends State<FoldersPage> {
-  List<Widget> _foldersList = [];
+  final List<Widget> _foldersList = [];
   String _folderTitle = 'Unnamed Folder';
   int _index = 0;
 
   final _textFieldCreatorController = TextEditingController();
+
+  _FoldersPageState() {
+    dataProvider.loadData("folders").then((data) {
+      data.forEach((property) {
+        FolderDto _newFolderDto = FolderDto(
+            property['title'], Key(property['key']), property['tasks']);
+        List<dynamic> tasks = _newFolderDto.getTasks();
+        _foldersList.add(_newFolder(context, _newFolderDto.getKey(),
+            _newFolderDto.getFolderTitle(), tasks));
+        setState(() {});
+      });
+      _index = data.length;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,19 +64,20 @@ class _FoldersPageState extends State<FoldersPage> {
     _setUnnamedFolderIfEmpty();
     setState(() {
       _folderTitle = _textFieldCreatorController.text;
-      _foldersList.add(_newFolder(context, newKey));
+      _foldersList.add(_newFolder(context, newKey, _folderTitle, []));
       _textFieldCreatorController.text = '';
     });
   }
 
-  ListTile _newFolder(BuildContext context, Key newKey) {
+  ListTile _newFolder(BuildContext context, Key newKey, String folderTitle,
+      List<dynamic> tasks) {
     return ListTile(
       leading: Icon(Icons.folder),
       key: newKey,
       tileColor: Colors.black12,
-      title: Center(child: Text(_folderTitle)),
+      title: Center(child: Text(folderTitle)),
       trailing: TextButton(onPressed: () {}, child: Icon(Icons.delete)),
-      onTap: () => Navigator.pushNamed(context, 'to-do', arguments: []),
+      onTap: () => Navigator.pushNamed(context, 'to-do', arguments: tasks),
       hoverColor: Colors.black12,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
