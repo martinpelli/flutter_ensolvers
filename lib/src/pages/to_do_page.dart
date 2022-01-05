@@ -10,8 +10,9 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage> {
   String _taskTitle = 'Unnamed Task';
   List<Widget> _tasksList = [];
-  int indexToRemove = -1;
+  int index = 0;
   bool _isChecked = false;
+  bool _wasEdited = false;
   final _textFieldCreatorController = TextEditingController();
   final _textFieldEditorController = TextEditingController();
 
@@ -36,7 +37,6 @@ class _ToDoPageState extends State<ToDoPage> {
       body: Center(
         child: Container(
           constraints: BoxConstraints(maxWidth: 500),
-          padding: EdgeInsets.all(30),
           child: Center(
             child: Column(children: [
               Column(children: _tasksList),
@@ -59,74 +59,86 @@ class _ToDoPageState extends State<ToDoPage> {
   }
 
   void _createNewTask() {
-    _taskTitle = _textFieldCreatorController.text;
+    index++;
+    Key newKey = Key(index.toString());
     _setUnnamedTaskIfEmpty();
     setState(() {
-      _tasksList.add(_newTask());
-      _tasksList.add(Padding(padding: EdgeInsets.all(5)));
+      _taskTitle = _textFieldCreatorController.text;
+      _tasksList.add(_newTask(newKey, _taskTitle));
       _textFieldCreatorController.text = '';
       _isChecked = false;
     });
   }
 
-  StatefulBuilder _newTask() {
+  StatefulBuilder _newTask(Key newkey, String taskTitle) {
     return StatefulBuilder(
+        key: newkey,
         builder: (BuildContext context, StateSetter setState) {
-      return ListTile(
-        tileColor: Colors.white,
-        title: Text(_taskTitle),
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5))),
-        leading: Checkbox(
-          value: _isChecked,
-          onChanged: (bool? newValue) {
-            setState(() {
-              _isChecked = newValue!;
-            });
-          },
-        ),
-        trailing: TextButton(
-          child: Icon(Icons.edit),
-          onPressed: () async {
-            await _editTask(context, _tasksList.length - 2);
-            setState(() {});
-          },
-        ),
-      );
-    });
+          return ListTile(
+            tileColor: Colors.white,
+            title: Text(_taskTitle),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(5))),
+            leading: Checkbox(
+              value: _isChecked,
+              onChanged: (bool? newValue) {
+                setState(() {
+                  _isChecked = newValue!;
+                  _taskTitle = taskTitle;
+                });
+              },
+            ),
+            trailing: TextButton(
+              child: Icon(Icons.edit),
+              onPressed: () async {
+                await _editTask(context, newkey, taskTitle);
+                if (_wasEdited) {
+                  setState(() {
+                    taskTitle = _taskTitle;
+                  });
+                  _wasEdited = false;
+                }
+              },
+            ),
+          );
+        });
   }
 
-  Future _editTask(BuildContext context, int index) => showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-          title: Text('Editing Task "${_taskTitle}"'),
-          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Edit Task'),
-              controller: _textFieldEditorController,
-            ),
-            Padding(padding: EdgeInsets.all(10.0)),
-            Row(
-              children: <Widget>[
-                TextButton(
-                    onPressed: () => _onConfirmEditTaskClicked(context),
-                    child: Text('Confirm')),
-                Padding(padding: EdgeInsetsDirectional.only(start: 120)),
-                TextButton(
-                    onPressed: () => _onDeleteEditTaskClicked(context, index),
-                    child: Icon(Icons.delete, color: Colors.red))
-              ],
-            )
-          ])));
+  Future _editTask(BuildContext context, Key newKey, String taskTitle) =>
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+              title: Text('Editing Task "${taskTitle}"'),
+              content:
+                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                TextField(
+                  decoration: InputDecoration(labelText: 'Edit Task'),
+                  controller: _textFieldEditorController,
+                ),
+                Padding(padding: EdgeInsets.all(10.0)),
+                Row(
+                  children: <Widget>[
+                    TextButton(
+                        onPressed: () => _onConfirmEditTaskClicked(context),
+                        child: Text('Confirm')),
+                    Padding(padding: EdgeInsetsDirectional.only(start: 120)),
+                    TextButton(
+                        onPressed: () =>
+                            _onDeleteEditTaskClicked(context, newKey),
+                        child: Icon(Icons.delete, color: Colors.red))
+                  ],
+                )
+              ])));
 
-  void _onDeleteEditTaskClicked(BuildContext context, int index) {
+  void _onDeleteEditTaskClicked(BuildContext context, Key newKey) {
     setState(() {
-      _tasksList.removeAt(index);
+      _tasksList.removeWhere((element) => element.key == newKey);
       Navigator.of(context).pop();
     });
   }
 
   void _onConfirmEditTaskClicked(BuildContext context) {
+    _wasEdited = true;
     setState(() {
       _taskTitle = _textFieldEditorController.text;
       _setUnnamedTaskIfEmpty();
