@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
       title: 'Ensolvers App',
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
-      routes: getRoutes(),
+      routes: getRoutes([]),
       onGenerateRoute: (RouteSettings settings) {
         return MaterialPageRoute(
             builder: (BuildContext context) => FoldersPage());

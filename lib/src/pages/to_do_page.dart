@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 class ToDoPage extends StatefulWidget {
-  const ToDoPage({Key? key}) : super(key: key);
+  final List<Widget> _tasksList = [];
+
+  ToDoPage(_tasksLits, {Key? key}) : super(key: key);
 
   @override
-  State<ToDoPage> createState() => _ToDoPageState();
+  State<ToDoPage> createState() => _ToDoPageState(_tasksList);
 }
 
 class _ToDoPageState extends State<ToDoPage> {
   String _taskTitle = 'Unnamed Task';
-  List<Widget> _tasksList = [];
+  final List<Widget> _tasksList;
   int _index = 0;
   bool _isChecked = false;
   bool _wasEdited = false;
   final _textFieldCreatorController = TextEditingController();
   final _textFieldEditorController = TextEditingController();
+
+  _ToDoPageState(this._tasksList);
 
   @override
   Widget build(BuildContext context) {

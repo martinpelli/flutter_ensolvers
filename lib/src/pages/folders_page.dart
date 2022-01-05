@@ -59,7 +59,7 @@ class _FoldersPageState extends State<FoldersPage> {
       tileColor: Colors.black12,
       title: Center(child: Text(_folderTitle)),
       trailing: TextButton(onPressed: () {}, child: Icon(Icons.delete)),
-      onTap: () => Navigator.pushNamed(context, 'to-do'),
+      onTap: () => Navigator.pushNamed(context, 'to-do', arguments: []),
       hoverColor: Colors.black12,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
