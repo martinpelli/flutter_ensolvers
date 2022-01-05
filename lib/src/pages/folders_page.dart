@@ -54,10 +54,11 @@ class _FoldersPageState extends State<FoldersPage> {
 
   ListTile _newFolder(BuildContext context, Key newKey) {
     return ListTile(
+      leading: Icon(Icons.folder),
       key: newKey,
       tileColor: Colors.black12,
-      title: Text(_folderTitle),
-      trailing: Icon(Icons.folder),
+      title: Center(child: Text(_folderTitle)),
+      trailing: TextButton(onPressed: () {}, child: Icon(Icons.delete)),
       onTap: () => Navigator.pushNamed(context, 'to-do'),
       hoverColor: Colors.black12,
       shape: RoundedRectangleBorder(
