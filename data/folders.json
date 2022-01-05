@@ -1,6 +1,6 @@
 {
     "serverName" : "Kid Cuddi",
-    "tasks" : [
+    "folders" : [
         {
             "title" : "Things to do at Home",
             "key": "0"
