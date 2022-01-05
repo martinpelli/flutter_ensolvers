@@ -10,7 +10,7 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage> {
   String _taskTitle = 'Unnamed Task';
   List<Widget> _tasksList = [];
-  int index = 0;
+  int _index = 0;
   bool _isChecked = false;
   bool _wasEdited = false;
   final _textFieldCreatorController = TextEditingController();
@@ -30,16 +30,17 @@ class _ToDoPageState extends State<ToDoPage> {
                   icon: Icon(Icons.arrow_back, color: Colors.white),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(right: 300),
+                  padding: const EdgeInsets.only(right: 360),
                   child: Text('To-Do List'),
                 )
               ])),
       body: Center(
         child: Container(
+          padding: EdgeInsets.only(top: 10),
           constraints: BoxConstraints(maxWidth: 500),
           child: Center(
             child: Column(children: [
-              Column(children: _tasksList),
+              Wrap(runSpacing: 10, children: _tasksList),
               _newTaskCreatorTile()
             ]),
           ),
@@ -59,8 +60,8 @@ class _ToDoPageState extends State<ToDoPage> {
   }
 
   void _createNewTask() {
-    index++;
-    Key newKey = Key(index.toString());
+    _index++;
+    Key newKey = Key(_index.toString());
     _setUnnamedTaskIfEmpty();
     setState(() {
       _taskTitle = _textFieldCreatorController.text;

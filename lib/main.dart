@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_ensolvers/src/routes/routes.dart';
 
-import 'package:flutter_ensolvers/src/pages/home_page.dart';
+import 'package:flutter_ensolvers/src/pages/folders_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: getRoutes(),
       onGenerateRoute: (RouteSettings settings) {
-        return MaterialPageRoute(builder: (BuildContext context) => HomePage());
+        return MaterialPageRoute(
+            builder: (BuildContext context) => FoldersPage());
       },
     );
   }
