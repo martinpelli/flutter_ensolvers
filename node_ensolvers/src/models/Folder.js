@@ -1,9 +1,9 @@
 const { Schema, model } = require('mongoose');
 
-new folderSchema = new Schema({
+const folderSchema = new Schema({
     title: String,
     key: String,
-    tasks: Array
+    tasks: []
 });
 
-module.exports = model('Task', taskSchema);
+module.exports = model('Folder', folderSchema);
