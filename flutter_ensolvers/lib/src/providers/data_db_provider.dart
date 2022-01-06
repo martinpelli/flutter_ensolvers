@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
+import 'package:flutter_ensolvers/src/DTOs/task_dto.dart';
 import 'package:http/http.dart' as http;
 
 class _DataDBProvider {
@@ -22,18 +23,53 @@ class _DataDBProvider {
     return _foldersDTO;
   }
 
-  void addFolderToDB(FolderDto folderDto) async {
+  Future<String> addFolderToDB(FolderDto folderDto) async {
     Uri url = Uri.parse('${apiAddress}folders/create');
     var _body = json.encode({
-      'title': '${folderDto.getFolderTitle()}',
-      'tasks': '${folderDto.getTasks()}'
+      'title': folderDto.getFolderTitle(),
+      'tasks': [],
     });
     final http.Response _response = await http.post(url,
-        headers: {'Content-Type': 'application/json; charset=UTF-8'},
-        body: _body);
+        headers: {'Content-Type': 'application/json'}, body: _body);
     if (_response.statusCode == 200) {
-      print("Folder added");
+      Map dataMap = json.decode(_response.body);
+      return (dataMap['folder']['_id']);
     } else {
+      throw Exception('Error while trying to add folder to database');
+    }
+  }
+
+  Future<String> addTaskToDB(TaskDto taskDto) async {
+    Uri url = Uri.parse('${apiAddress}tasks/create');
+    var _body = json.encode({
+      'title': taskDto.getTaskTitle(),
+      'checked': '${taskDto.getIsChecked()}'
+    });
+    final http.Response _response = await http.post(url,
+        headers: {'Content-Type': 'application/json'}, body: _body);
+    if (_response.statusCode == 200) {
+      Map dataMap = json.decode(_response.body);
+      return (dataMap['task']['_id']);
+    } else {
+      throw Exception('Error while trying to add folder to database');
+    }
+  }
+
+  Future<void> updateFolderTasks(TaskDto task, FolderDto folder) async {
+    Uri url = Uri.parse('${apiAddress}folders/modify');
+    final List tasks = folder.getTasks();
+    tasks.add(json.encode({
+      'title': task.getTaskTitle(),
+      'checked': task.getIsChecked(),
+      'key': task.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), '')
+    }));
+    var _body = json.encode({
+      '_id': folder.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), ''),
+      'tasks': tasks
+    });
+    final http.Response _response = await http.put(url,
+        headers: {'Content-Type': 'application/json'}, body: _body);
+    if (_response.statusCode != 200) {
       throw Exception('Error while trying to add folder to database');
     }
   }

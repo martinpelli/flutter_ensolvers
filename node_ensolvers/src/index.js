@@ -1,7 +1,6 @@
 const app = require('./app');
 const {connect} =  require('./database');
 
-
 async function main(){
     await connect();
 
@@ -10,3 +9,4 @@ async function main(){
 }
 
 main();
+

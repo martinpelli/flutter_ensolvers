@@ -5,15 +5,13 @@ class TaskDto {
   bool _isChecked = false;
   Key _key = Key('0');
 
-  TaskDto(taskTitle, isChecked, key) {
+  TaskDto(taskTitle, isChecked, {key}) {
     _taskTitle = taskTitle;
     _isChecked = isChecked;
     _key = key;
   }
 
-  void _setTaskDto(taskTitle, isChecked, key) {
-    _taskTitle = taskTitle;
-    _isChecked = isChecked;
+  void setKey(key) {
     _key = key;
   }
 

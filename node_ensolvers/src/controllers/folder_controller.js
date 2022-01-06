@@ -19,4 +19,17 @@ const deleteFolder = async(req, res) =>{
     });
 }
 
-module.exports = {getFolders, createFolder, deleteFolder};
+const deleteFolders = async(req, res) =>{
+    res.json({
+        folder: await folderService.deleteFolders()
+    });
+}
+
+const modifyFolder = async(req, res) =>{
+    res.json({
+        tasks: await folderService.modifyFolder(req.body)
+    });
+}
+
+
+module.exports = {getFolders, createFolder, deleteFolder, deleteFolders, modifyFolder};

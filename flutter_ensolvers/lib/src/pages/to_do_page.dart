@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
 
 import 'package:flutter_ensolvers/src/DTOs/task_dto.dart';
+import 'package:flutter_ensolvers/src/providers/data_db_provider.dart';
 
 class ToDoPage extends StatefulWidget {
   const ToDoPage({Key? key}) : super(key: key);
@@ -12,10 +16,10 @@ class ToDoPage extends StatefulWidget {
 class _ToDoPageState extends State<ToDoPage> {
   String _taskTitle = 'Unnamed Task';
   final List<Widget> _tasksList = [];
-  int _index = 0;
   bool _wasEdited = false;
   final _textFieldCreatorController = TextEditingController();
   final _textFieldEditorController = TextEditingController();
+  FolderDto _folder = FolderDto('UnnamedFolder', []);
 
   void initState() {
     super.initState();
@@ -23,14 +27,19 @@ class _ToDoPageState extends State<ToDoPage> {
   }
 
   void _loadTasks() {
-    final tasks = ModalRoute.of(context)?.settings.arguments as List<dynamic>;
-    tasks.forEach((property) {
-      TaskDto _newTaskDto = TaskDto(property['title'],
-          property['checked'].toLowerCase() == 'true', Key(property['key']));
+    final arguments = ModalRoute.of(context)?.settings.arguments as Map;
+    final tasksDTO = arguments['tasks'] as List;
+    _folder = arguments['folder'] as FolderDto;
+    for (var task in tasksDTO) {
+      Map dataMap = json.decode(task.toString());
+      TaskDto _newTaskDto = TaskDto(dataMap['title'],
+          dataMap['checked'].toString().toLowerCase() == 'true',
+          key: Key(dataMap['key']));
       _taskTitle = _newTaskDto.getTaskTitle();
-      _tasksList.add(_newTask(
-          _newTaskDto.getKey(), _taskTitle, _newTaskDto.getIsChecked()));
-    });
+      _tasksList.add(_newTask(_newTaskDto.getKey(), _newTaskDto.getTaskTitle(),
+          _newTaskDto.getIsChecked()));
+    }
+
     setState(() {});
   }
 
@@ -78,14 +87,21 @@ class _ToDoPageState extends State<ToDoPage> {
   }
 
   void _createNewTask() {
-    _index++;
-    Key newKey = Key(_index.toString());
     _setUnnamedTaskIfEmpty();
-    setState(() {
+    try {
       _taskTitle = _textFieldCreatorController.text;
-      _tasksList.add(_newTask(newKey, _taskTitle, false));
-      _textFieldCreatorController.text = '';
-    });
+      TaskDto _newTaskDTO = TaskDto(_taskTitle, false);
+      dataDBProvider.addTaskToDB(_newTaskDTO).then((taskId) {
+        _tasksList.add(_newTask(Key(taskId), _newTaskDTO.getTaskTitle(),
+            _newTaskDTO.getIsChecked()));
+        _textFieldCreatorController.text = '';
+        _newTaskDTO.setKey(Key(taskId));
+        dataDBProvider.updateFolderTasks(_newTaskDTO, _folder);
+        setState(() {});
+      });
+    } catch (exception) {
+      print(exception);
+    }
   }
 
   StatefulBuilder _newTask(Key newkey, String taskTitle, isChecked) {

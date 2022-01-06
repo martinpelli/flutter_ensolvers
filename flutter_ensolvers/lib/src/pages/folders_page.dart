@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
 import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
@@ -12,7 +14,7 @@ class FoldersPage extends StatefulWidget {
 class _FoldersPageState extends State<FoldersPage> {
   final List<Widget> _foldersList = [];
   String _folderTitle = 'Unnamed Folder';
-  int _index = 0;
+  FolderDto _newFolderDTO = FolderDto('Unnamed Folder', []);
 
   final _textFieldCreatorController = TextEditingController();
 
@@ -41,12 +43,10 @@ class _FoldersPageState extends State<FoldersPage> {
   void _addSavedFolders() {
     dataDBProvider.loadData().then((foldersDTO) {
       for (var folderDTo in foldersDTO) {
-        List<dynamic> tasks = folderDTo.getTasks();
-        _foldersList.add(_newFolder(
-            context, folderDTo.getKey(), folderDTo.getFolderTitle(), tasks));
+        _foldersList.add(_newFolder(context, folderDTo.getKey(),
+            folderDTo.getFolderTitle(), folderDTo.getTasks()));
         setState(() {});
       }
-      _index = foldersDTO.length;
     });
   }
 
@@ -62,32 +62,33 @@ class _FoldersPageState extends State<FoldersPage> {
   }
 
   void _createNewFolder(BuildContext context) {
-    _index++;
-    Key newKey = Key(_index.toString());
     _setUnnamedFolderIfEmpty();
     try {
-      setState(() {
-        _folderTitle = _textFieldCreatorController.text;
-        FolderDto _newFolderDTO = FolderDto(_folderTitle, []);
-        dataDBProvider.addFolderToDB(_newFolderDTO);
-        _foldersList.add(_newFolder(context, newKey,
+      _folderTitle = _textFieldCreatorController.text;
+      _newFolderDTO = FolderDto(_folderTitle, []);
+      dataDBProvider.addFolderToDB(_newFolderDTO).then((id) {
+        _foldersList.add(_newFolder(context, Key(id),
             _newFolderDTO.getFolderTitle(), _newFolderDTO.getTasks()));
         _textFieldCreatorController.text = '';
+        print(_newFolderDTO.getTasks());
+        _newFolderDTO.setKey(Key(id));
+        setState(() {});
       });
     } catch (exception) {
       print(exception);
     }
   }
 
-  ListTile _newFolder(BuildContext context, Key newKey, String folderTitle,
-      List<dynamic> tasks) {
+  ListTile _newFolder(
+      BuildContext context, Key newKey, String folderTitle, List tasks) {
     return ListTile(
       leading: Icon(Icons.folder),
       key: newKey,
       tileColor: Colors.black12,
       title: Center(child: Text(folderTitle)),
       trailing: TextButton(onPressed: () {}, child: Icon(Icons.delete)),
-      onTap: () => Navigator.pushNamed(context, 'to-do', arguments: tasks),
+      onTap: () => Navigator.pushNamed(context, 'to-do',
+          arguments: {"tasks": tasks, "folder": _newFolderDTO}),
       hoverColor: Colors.black12,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),

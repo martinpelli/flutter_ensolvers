@@ -37,6 +37,14 @@ class taskService{
         }
     }
 
+    async deleteTasks(){
+        try{
+            await taskModel.deleteMany();
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     async modifyTask(newTask){
         var taskModified;
         try{

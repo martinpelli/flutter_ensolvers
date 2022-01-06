@@ -19,10 +19,17 @@ const deleteTask = async(req, res) =>{
     });
 }
 
+const deleteTasks = async(req, res) =>{
+    res.json({
+        task: await taskService.deleteTasks()
+    });
+}
+
 const modifyTask = async(req, res) =>{
     res.json({
         task: await taskService.modifyTask(req.body)
     });
 }
 
-module.exports = {getTasks, createTask, deleteTask,modifyTask};
+
+module.exports = {getTasks, createTask, deleteTask, deleteTasks, modifyTask};

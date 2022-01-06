@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_ensolvers/src/DTOs/task_dto.dart';
-
 class FolderDto {
   String _folderTitle = 'Unnamed Folder';
   Key _key = Key('0');
-  List<dynamic> _tasks = [];
+  List _tasks = [];
 
   FolderDto(taskTitle, tasks, {key}) {
     _folderTitle = taskTitle;
@@ -13,10 +11,8 @@ class FolderDto {
     _tasks = tasks;
   }
 
-  void seFolderDto(folderTitle, key, tasks) {
-    _folderTitle = folderTitle;
+  void setKey(key) {
     _key = key;
-    _tasks = tasks;
   }
 
   String getFolderTitle() {
@@ -27,7 +23,7 @@ class FolderDto {
     return _key;
   }
 
-  List<dynamic> getTasks() {
+  List getTasks() {
     return _tasks;
   }
 }
