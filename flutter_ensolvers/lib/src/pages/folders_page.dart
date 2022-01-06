@@ -17,17 +17,7 @@ class _FoldersPageState extends State<FoldersPage> {
   final _textFieldCreatorController = TextEditingController();
 
   _FoldersPageState() {
-    dataDBProvider.loadData().then((data) {
-      data.forEach((property) {
-        FolderDto _newFolderDto = FolderDto(
-            property['title'], Key(property['key']), property['tasks']);
-        List<dynamic> tasks = _newFolderDto.getTasks();
-        _foldersList.add(_newFolder(context, _newFolderDto.getKey(),
-            _newFolderDto.getFolderTitle(), tasks));
-        setState(() {});
-      });
-      _index = data.length;
-    });
+    _addSavedFolders();
   }
 
   @override
@@ -48,6 +38,18 @@ class _FoldersPageState extends State<FoldersPage> {
     );
   }
 
+  void _addSavedFolders() {
+    dataDBProvider.loadData().then((foldersDTO) {
+      for (var folderDTo in foldersDTO) {
+        List<dynamic> tasks = folderDTo.getTasks();
+        _foldersList.add(_newFolder(
+            context, folderDTo.getKey(), folderDTo.getFolderTitle(), tasks));
+        setState(() {});
+      }
+      _index = foldersDTO.length;
+    });
+  }
+
   ListTile _newFolderCreatorTile() {
     return ListTile(
         title: TextField(
@@ -63,11 +65,18 @@ class _FoldersPageState extends State<FoldersPage> {
     _index++;
     Key newKey = Key(_index.toString());
     _setUnnamedFolderIfEmpty();
-    setState(() {
-      _folderTitle = _textFieldCreatorController.text;
-      _foldersList.add(_newFolder(context, newKey, _folderTitle, []));
-      _textFieldCreatorController.text = '';
-    });
+    try {
+      setState(() {
+        _folderTitle = _textFieldCreatorController.text;
+        FolderDto _newFolderDTO = FolderDto(_folderTitle, []);
+        dataDBProvider.addFolderToDB(_newFolderDTO);
+        _foldersList.add(_newFolder(context, newKey,
+            _newFolderDTO.getFolderTitle(), _newFolderDTO.getTasks()));
+        _textFieldCreatorController.text = '';
+      });
+    } catch (exception) {
+      print(exception);
+    }
   }
 
   ListTile _newFolder(BuildContext context, Key newKey, String folderTitle,

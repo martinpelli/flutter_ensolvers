@@ -7,7 +7,7 @@ class FolderDto {
   Key _key = Key('0');
   List<dynamic> _tasks = [];
 
-  FolderDto(taskTitle, key, tasks) {
+  FolderDto(taskTitle, tasks, {key}) {
     _folderTitle = taskTitle;
     _key = key;
     _tasks = tasks;
