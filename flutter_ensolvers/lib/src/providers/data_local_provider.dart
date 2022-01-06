@@ -2,9 +2,9 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import 'dart:convert';
 
-class _DataProvider {
+class _DataLocalProvider {
   List<dynamic> _dataObjects = [];
-  _DataProvider() {}
+  _DataLocalProvider() {}
 
   Future<List<dynamic>> loadData() async {
     final response = await rootBundle.loadString('data/folders.json');
@@ -14,4 +14,4 @@ class _DataProvider {
   }
 }
 
-final dataProvider = _DataProvider();
+final dataLocalProvider = _DataLocalProvider();

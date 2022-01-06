@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
-import 'package:flutter_ensolvers/src/providers/data_provider.dart';
+import 'package:flutter_ensolvers/src/providers/data_db_provider.dart';
+//import 'package:flutter_ensolvers/src/providers/data_local_provider.dart';
 
 class FoldersPage extends StatefulWidget {
   @override
@@ -16,7 +17,7 @@ class _FoldersPageState extends State<FoldersPage> {
   final _textFieldCreatorController = TextEditingController();
 
   _FoldersPageState() {
-    dataProvider.loadData().then((data) {
+    dataDBProvider.loadData().then((data) {
       data.forEach((property) {
         FolderDto _newFolderDto = FolderDto(
             property['title'], Key(property['key']), property['tasks']);
