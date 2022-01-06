@@ -33,7 +33,6 @@ class FolderService{
             });
             return deletedFolder;
         }catch(error){
-            console.log("asd");
             console.log(error);
         }
     }
