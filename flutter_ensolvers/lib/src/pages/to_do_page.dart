@@ -31,10 +31,9 @@ class _ToDoPageState extends State<ToDoPage> {
     final tasksDTO = arguments['tasks'] as List;
     _folder = arguments['folder'] as FolderDto;
     for (var task in tasksDTO) {
-      Map dataMap = json.decode(task.toString());
-      TaskDto _newTaskDto = TaskDto(dataMap['title'],
-          dataMap['checked'].toString().toLowerCase() == 'true',
-          key: Key(dataMap['key']));
+      TaskDto _newTaskDto = TaskDto(
+          task['title'], task['checked'].toString().toLowerCase() == 'true',
+          key: Key(task['key']));
       _taskTitle = _newTaskDto.getTaskTitle();
       _tasksList.add(_newTask(_newTaskDto.getKey(), _newTaskDto.getTaskTitle(),
           _newTaskDto.getIsChecked()));
@@ -96,6 +95,7 @@ class _ToDoPageState extends State<ToDoPage> {
             _newTaskDTO.getIsChecked()));
         _textFieldCreatorController.text = '';
         _newTaskDTO.setKey(Key(taskId));
+        print(taskId);
         dataDBProvider.updateFolderTasks(_newTaskDTO, _folder);
         setState(() {});
       });
@@ -119,13 +119,16 @@ class _ToDoPageState extends State<ToDoPage> {
                 setState(() {
                   isChecked = newValue!;
                   _taskTitle = taskTitle;
+                  dataDBProvider
+                      .updateTask(TaskDto(_taskTitle, isChecked, key: newkey));
                 });
               },
             ),
             trailing: TextButton(
               child: Icon(Icons.edit),
               onPressed: () async {
-                await _editTask(context, newkey, taskTitle);
+                await _editTask(
+                    context, TaskDto(taskTitle, isChecked, key: newkey));
                 if (_wasEdited) {
                   setState(() {
                     taskTitle = _taskTitle;
@@ -138,43 +141,46 @@ class _ToDoPageState extends State<ToDoPage> {
         });
   }
 
-  Future _editTask(BuildContext context, Key newKey, String taskTitle) =>
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-              title: Text('Editing Task "${taskTitle}"'),
-              content:
-                  Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(labelText: 'Edit Task'),
-                  controller: _textFieldEditorController,
-                ),
-                Padding(padding: EdgeInsets.all(10.0)),
-                Row(
-                  children: <Widget>[
-                    TextButton(
-                        onPressed: () => _onConfirmEditTaskClicked(context),
-                        child: Text('Confirm')),
-                    Padding(padding: EdgeInsetsDirectional.only(start: 120)),
-                    TextButton(
-                        onPressed: () =>
-                            _onDeleteEditTaskClicked(context, newKey),
-                        child: Icon(Icons.delete, color: Colors.red))
-                  ],
-                )
-              ])));
+  Future _editTask(BuildContext context, TaskDto taskDto) => showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+          title: Text('Editing Task "${taskDto.getTaskTitle()}"'),
+          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            TextField(
+              decoration: InputDecoration(labelText: 'Edit Task'),
+              controller: _textFieldEditorController,
+            ),
+            Padding(padding: EdgeInsets.all(10.0)),
+            Row(
+              children: <Widget>[
+                TextButton(
+                    onPressed: () =>
+                        _onConfirmEditTaskClicked(context, taskDto),
+                    child: Text('Confirm')),
+                Padding(padding: EdgeInsetsDirectional.only(start: 120)),
+                TextButton(
+                    onPressed: () =>
+                        _onDeleteEditTaskClicked(context, taskDto.getKey()),
+                    child: Icon(Icons.delete, color: Colors.red))
+              ],
+            )
+          ])));
 
   void _onDeleteEditTaskClicked(BuildContext context, Key newKey) {
     setState(() {
       _tasksList.removeWhere((element) => element.key == newKey);
       Navigator.of(context).pop();
+      dataDBProvider.deleteElement(
+          newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''), 'tasks');
     });
   }
 
-  void _onConfirmEditTaskClicked(BuildContext context) {
+  void _onConfirmEditTaskClicked(BuildContext context, TaskDto taskDto) {
     _wasEdited = true;
     setState(() {
       _taskTitle = _textFieldEditorController.text;
+      taskDto.setTitle(_taskTitle);
+      dataDBProvider.updateTask(taskDto);
       _setUnnamedTaskIfEmpty();
       Navigator.of(context).pop();
     });

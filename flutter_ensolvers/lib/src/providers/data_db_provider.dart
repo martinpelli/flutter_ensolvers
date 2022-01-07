@@ -51,18 +51,18 @@ class _DataDBProvider {
       Map dataMap = json.decode(_response.body);
       return (dataMap['task']['_id']);
     } else {
-      throw Exception('Error while trying to add folder to database');
+      throw Exception('Error while trying to add task to database');
     }
   }
 
   Future<void> updateFolderTasks(TaskDto task, FolderDto folder) async {
     Uri url = Uri.parse('${apiAddress}folders/modify');
     final List tasks = folder.getTasks();
-    tasks.add(json.encode({
+    tasks.add({
       'title': task.getTaskTitle(),
       'checked': task.getIsChecked(),
       'key': task.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), '')
-    }));
+    });
     var _body = json.encode({
       '_id': folder.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), ''),
       'tasks': tasks
@@ -70,7 +70,30 @@ class _DataDBProvider {
     final http.Response _response = await http.put(url,
         headers: {'Content-Type': 'application/json'}, body: _body);
     if (_response.statusCode != 200) {
-      throw Exception('Error while trying to add folder to database');
+      throw Exception('Error while trying to upadate folder to database');
+    }
+  }
+
+  Future<void> updateTask(TaskDto task) async {
+    Uri url = Uri.parse('${apiAddress}tasks/modify');
+    var _body = json.encode({
+      '_id': task.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), ''),
+      'title': task.getTaskTitle(),
+      'checked': task.getIsChecked()
+    });
+    final http.Response _response = await http.put(url,
+        headers: {'Content-Type': 'application/json'}, body: _body);
+    if (_response.statusCode != 200) {
+      throw Exception('Error while trying to update task to database');
+    }
+  }
+
+  Future<void> deleteElement(String id, String element) async {
+    Uri url = Uri.parse('${apiAddress}' + element + '/delete/$id');
+    final http.Response _response =
+        await http.delete(url, headers: {'Content-Type': 'application/json'});
+    if (_response.statusCode != 200) {
+      throw Exception('Error while trying to delete task to database');
     }
   }
 }

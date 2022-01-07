@@ -70,7 +70,6 @@ class _FoldersPageState extends State<FoldersPage> {
         _foldersList.add(_newFolder(context, Key(id),
             _newFolderDTO.getFolderTitle(), _newFolderDTO.getTasks()));
         _textFieldCreatorController.text = '';
-        print(_newFolderDTO.getTasks());
         _newFolderDTO.setKey(Key(id));
         setState(() {});
       });
@@ -86,13 +85,23 @@ class _FoldersPageState extends State<FoldersPage> {
       key: newKey,
       tileColor: Colors.black12,
       title: Center(child: Text(folderTitle)),
-      trailing: TextButton(onPressed: () {}, child: Icon(Icons.delete)),
+      trailing: TextButton(
+          onPressed: () => _onDeleteFolderClicked(context, newKey),
+          child: Icon(Icons.delete)),
       onTap: () => Navigator.pushNamed(context, 'to-do',
           arguments: {"tasks": tasks, "folder": _newFolderDTO}),
       hoverColor: Colors.black12,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
     );
+  }
+
+  void _onDeleteFolderClicked(BuildContext context, Key newKey) {
+    setState(() {
+      _foldersList.removeWhere((element) => element.key == newKey);
+      dataDBProvider.deleteElement(
+          newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''), 'folders');
+    });
   }
 
   void _setUnnamedFolderIfEmpty() {

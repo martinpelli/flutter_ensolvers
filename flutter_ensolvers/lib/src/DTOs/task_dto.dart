@@ -26,4 +26,8 @@ class TaskDto {
   Key getKey() {
     return _key;
   }
+
+  void setTitle(String title) {
+    _taskTitle = title;
+  }
 }
