@@ -22,5 +22,5 @@ will remove all the tasks belonging to it
 items using the same UI implemented in Phase 1
 
 Problems:
-**Time**: Today I spent like 8 hs to only try to fix an error on Node Js that didn't let me use two models, so the database is inconsistent, redundant. Instead of saving the tasks in folders, I would have been like to only save the tasks id, but at least is working.
-I didn´t have enough time to upload the app and the DB. So it´s only working if you clone the repo and make the proper installs.
+**Time**: Today I spent like 8 hs to only trying to fix an error on Node Js that didn't let me use two models, so the database is inconsistent, redundant. Instead of saving the tasks in folders, I would have been like to only save the tasks id, but at least is working.
+I didn't have enough time to upload the app and the DB. So it´s only working if you clone the repo and make the proper installs.
