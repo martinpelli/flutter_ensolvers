@@ -4,7 +4,6 @@ const router = Router();
 
 router.get('/api/folders', getFolders);
 
-
 router.post('/api/folders/create',createFolder);
 
 router.delete('/api/folders/delete/:id', deleteFolder);

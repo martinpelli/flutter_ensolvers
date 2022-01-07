@@ -25,6 +25,18 @@ class FolderService{
         }
     }
 
+    async addIdTaskToFolder(folderId, taskId){
+        try{
+            await folderModel.updateOne(
+                { '_id': folderId }, { 
+                    '$push': {
+                        'tasks': taskId} }
+            )
+        }catch(error){
+            console.log(error);
+        }
+    }
+
     async deleteFolder(idc){
         var deletedFolder;
         try{

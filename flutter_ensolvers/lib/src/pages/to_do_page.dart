@@ -90,12 +90,13 @@ class _ToDoPageState extends State<ToDoPage> {
     try {
       _taskTitle = _textFieldCreatorController.text;
       TaskDto _newTaskDTO = TaskDto(_taskTitle, false);
-      dataDBProvider.addTaskToDB(_newTaskDTO).then((taskId) {
+      dataDBProvider.addTaskToDB(_newTaskDTO, _folder.getKey()).then((taskId) {
         _tasksList.add(_newTask(Key(taskId), _newTaskDTO.getTaskTitle(),
             _newTaskDTO.getIsChecked()));
         _textFieldCreatorController.text = '';
         _newTaskDTO.setKey(Key(taskId));
-        dataDBProvider.updateFolderTasks(_newTaskDTO, _folder, true);
+        //dataDBProvider.updateFolderTasks(_newTaskDTO, _folder, true);
+        //dataDBProvider.addIdTaskToFolder(taskId, _folder.getKey());
         setState(() {});
       });
     } catch (exception) {

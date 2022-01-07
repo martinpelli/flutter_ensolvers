@@ -39,8 +39,10 @@ class _DataDBProvider {
     }
   }
 
-  Future<String> addTaskToDB(TaskDto taskDto) async {
-    Uri url = Uri.parse('${apiAddress}tasks/create');
+  Future<String> addTaskToDB(TaskDto taskDto, Key folderKey) async {
+    final String folderId =
+        folderKey.toString().replaceAll(RegExp(r'[^\w\s]+'), '');
+    Uri url = Uri.parse('${apiAddress}tasks/create/$folderId');
     var _body = json.encode({
       'title': taskDto.getTaskTitle(),
       'checked': '${taskDto.getIsChecked()}'
@@ -115,6 +117,18 @@ class _DataDBProvider {
         headers: {'Content-Type': 'application/json'}, body: _body);
     if (_response.statusCode != 200) {
       throw Exception('Error while trying to update task to database');
+    }
+  }
+
+  Future<void> addIdTaskToFolder(String taskId, Key folderKey) async {
+    final String folderId =
+        folderKey.toString().replaceAll(RegExp(r'[^\w\s]+'), '');
+    Uri url = Uri.parse('${apiAddress}folders/addtask/$folderId');
+    var _body = json.encode({'taskId': taskId});
+    final http.Response _response = await http.put(url,
+        headers: {'Content-Type': 'application/json'}, body: _body);
+    if (_response.statusCode != 200) {
+      throw Exception('Error while trying to add task to folder in database');
     }
   }
 }

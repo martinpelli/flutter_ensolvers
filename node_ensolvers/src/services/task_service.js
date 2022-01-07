@@ -1,6 +1,8 @@
 const taskModel = require('../models/task');
+const folderService = require('./folder_service.js');
 
 class taskService{
+
     taskService(){}
 
     async getTasks(){
@@ -11,12 +13,14 @@ class taskService{
         }
     }
 
-    async createTask(task = new taskModel()){
+    async createTask(folderId, task = new taskModel()){
         try{
             var savedTask;
             await taskModel.create(task).then((value) =>{
                 savedTask = value;
-            });
+            }).then(() => {
+               folderService.addIdTaskToFolder(folderId, savedTask['_id'].toString());}
+            );
             return savedTask;
         }catch(error){
             console.log(error);
@@ -64,5 +68,6 @@ class taskService{
     }
 
 }
+
 
 module.exports = new taskService();

@@ -7,11 +7,11 @@ const getFolders = async(req, res) => {
 }
 
 const createFolder = async(req, res) =>{
-    console.log(req.body);
     res.json({
         folder: await folderService.createFolder(req.body)
     });
 }
+
 
 const deleteFolder = async(req, res) =>{
     res.json({
