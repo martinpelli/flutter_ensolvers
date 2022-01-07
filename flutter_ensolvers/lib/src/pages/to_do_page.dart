@@ -95,8 +95,7 @@ class _ToDoPageState extends State<ToDoPage> {
             _newTaskDTO.getIsChecked()));
         _textFieldCreatorController.text = '';
         _newTaskDTO.setKey(Key(taskId));
-        print(taskId);
-        dataDBProvider.updateFolderTasks(_newTaskDTO, _folder);
+        dataDBProvider.updateFolderTasks(_newTaskDTO, _folder, true);
         setState(() {});
       });
     } catch (exception) {
@@ -119,8 +118,9 @@ class _ToDoPageState extends State<ToDoPage> {
                 setState(() {
                   isChecked = newValue!;
                   _taskTitle = taskTitle;
-                  dataDBProvider
-                      .updateTask(TaskDto(_taskTitle, isChecked, key: newkey));
+                  TaskDto taskDto = TaskDto(_taskTitle, isChecked, key: newkey);
+                  dataDBProvider.updateTask(taskDto);
+                  dataDBProvider.updateFolderTasks(taskDto, _folder, false);
                 });
               },
             ),
@@ -181,6 +181,7 @@ class _ToDoPageState extends State<ToDoPage> {
       _taskTitle = _textFieldEditorController.text;
       taskDto.setTitle(_taskTitle);
       dataDBProvider.updateTask(taskDto);
+      dataDBProvider.updateFolderTasks(taskDto, _folder, false);
       _setUnnamedTaskIfEmpty();
       Navigator.of(context).pop();
     });

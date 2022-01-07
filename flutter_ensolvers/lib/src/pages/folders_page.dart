@@ -45,6 +45,7 @@ class _FoldersPageState extends State<FoldersPage> {
       for (var folderDTo in foldersDTO) {
         _foldersList.add(_newFolder(context, folderDTo.getKey(),
             folderDTo.getFolderTitle(), folderDTo.getTasks()));
+        _newFolderDTO = folderDTo;
         setState(() {});
       }
     });
@@ -73,9 +74,7 @@ class _FoldersPageState extends State<FoldersPage> {
         _newFolderDTO.setKey(Key(id));
         setState(() {});
       });
-    } catch (exception) {
-      print(exception);
-    }
+    } catch (exception) {}
   }
 
   ListTile _newFolder(

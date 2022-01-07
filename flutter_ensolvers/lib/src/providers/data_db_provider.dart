@@ -55,14 +55,21 @@ class _DataDBProvider {
     }
   }
 
-  Future<void> updateFolderTasks(TaskDto task, FolderDto folder) async {
+  Future<void> updateFolderTasks(
+      TaskDto task, FolderDto folder, bool isNewTask) async {
     Uri url = Uri.parse('${apiAddress}folders/modify');
+    final String id =
+        task.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), '');
     final List tasks = folder.getTasks();
+    if (!isNewTask) {
+      tasks.removeAt(tasks.indexWhere((_task) => _task['key'] == id));
+    }
     tasks.add({
       'title': task.getTaskTitle(),
       'checked': task.getIsChecked(),
-      'key': task.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), '')
+      'key': id
     });
+
     var _body = json.encode({
       '_id': folder.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), ''),
       'tasks': tasks
