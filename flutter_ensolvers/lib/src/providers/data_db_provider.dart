@@ -103,6 +103,20 @@ class _DataDBProvider {
       throw Exception('Error while trying to delete task to database');
     }
   }
+
+  Future<void> deleteTasksInFolder(List tasks) async {
+    Uri url = Uri.parse('${apiAddress}tasks/delete/');
+    final List tasksIds = [];
+    for (var task in tasks) {
+      tasksIds.add(task['key']);
+    }
+    var _body = json.encode({'tasksIds': tasksIds});
+    final http.Response _response = await http.delete(url,
+        headers: {'Content-Type': 'application/json'}, body: _body);
+    if (_response.statusCode != 200) {
+      throw Exception('Error while trying to update task to database');
+    }
+  }
 }
 
 final dataDBProvider = _DataDBProvider();

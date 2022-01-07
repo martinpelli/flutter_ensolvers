@@ -59,6 +59,10 @@ class taskService{
         }
     }
 
+    async deleteTasksInFolder(tasksIds){
+        taskModel.deleteMany({ _id: { $in: tasksIds['tasksIds']}}, function(err) {}).clone();
+    }
+
 }
 
 module.exports = new taskService();

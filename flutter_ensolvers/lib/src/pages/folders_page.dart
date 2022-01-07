@@ -100,6 +100,8 @@ class _FoldersPageState extends State<FoldersPage> {
       _foldersList.removeWhere((element) => element.key == newKey);
       dataDBProvider.deleteElement(
           newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''), 'folders');
+      print(_newFolderDTO.getTasks());
+      dataDBProvider.deleteTasksInFolder(_newFolderDTO.getTasks());
     });
   }
 
