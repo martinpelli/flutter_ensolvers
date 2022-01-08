@@ -41,7 +41,7 @@ class _FoldersPageState extends State<FoldersPage> {
   }
 
   void _addSavedFolders() {
-    dataDBProvider.loadData().then((foldersDTO) {
+    dataDBProvider.getFoldersFromDB().then((foldersDTO) {
       for (var folderDTo in foldersDTO) {
         _foldersList.add(_newFolder(context, folderDTo.getKey(),
             folderDTo.getFolderTitle(), folderDTo.getTasks()));
@@ -88,7 +88,7 @@ class _FoldersPageState extends State<FoldersPage> {
           onPressed: () => _onDeleteFolderClicked(context, newKey),
           child: Icon(Icons.delete)),
       onTap: () => Navigator.pushNamed(context, 'to-do',
-          arguments: {"tasks": tasks, "folder": _newFolderDTO}),
+          arguments: {"folderId": newKey.toString()}),
       hoverColor: Colors.black12,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -100,7 +100,6 @@ class _FoldersPageState extends State<FoldersPage> {
       _foldersList.removeWhere((element) => element.key == newKey);
       dataDBProvider.deleteElement(
           newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''), 'folders');
-      print(_newFolderDTO.getTasks());
       dataDBProvider.deleteTasksInFolder(_newFolderDTO.getTasks());
     });
   }

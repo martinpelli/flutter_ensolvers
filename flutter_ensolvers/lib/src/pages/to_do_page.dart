@@ -19,24 +19,21 @@ class _ToDoPageState extends State<ToDoPage> {
   bool _wasEdited = false;
   final _textFieldCreatorController = TextEditingController();
   final _textFieldEditorController = TextEditingController();
-  FolderDto _folder = FolderDto('UnnamedFolder', []);
+  String _folderId = '';
 
   void initState() {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((_) => _loadTasks());
   }
 
-  void _loadTasks() {
+  void _loadTasks() async {
     final arguments = ModalRoute.of(context)?.settings.arguments as Map;
-    final tasksDTO = arguments['tasks'] as List;
-    _folder = arguments['folder'] as FolderDto;
+    List<TaskDto> tasksDTO;
+    _folderId = arguments['folderId'];
+    tasksDTO = await dataDBProvider.getTasksFromDB(_folderId);
     for (var task in tasksDTO) {
-      TaskDto _newTaskDto = TaskDto(
-          task['title'], task['checked'].toString().toLowerCase() == 'true',
-          key: Key(task['key']));
-      _taskTitle = _newTaskDto.getTaskTitle();
-      _tasksList.add(_newTask(_newTaskDto.getKey(), _newTaskDto.getTaskTitle(),
-          _newTaskDto.getIsChecked()));
+      _tasksList.add(
+          _newTask(task.getKey(), task.getTaskTitle(), task.getIsChecked()));
     }
 
     setState(() {});
@@ -90,13 +87,11 @@ class _ToDoPageState extends State<ToDoPage> {
     try {
       _taskTitle = _textFieldCreatorController.text;
       TaskDto _newTaskDTO = TaskDto(_taskTitle, false);
-      dataDBProvider.addTaskToDB(_newTaskDTO, _folder.getKey()).then((taskId) {
+      dataDBProvider.addTaskToDB(_newTaskDTO, _folderId).then((taskId) {
         _tasksList.add(_newTask(Key(taskId), _newTaskDTO.getTaskTitle(),
             _newTaskDTO.getIsChecked()));
         _textFieldCreatorController.text = '';
         _newTaskDTO.setKey(Key(taskId));
-        //dataDBProvider.updateFolderTasks(_newTaskDTO, _folder, true);
-        //dataDBProvider.addIdTaskToFolder(taskId, _folder.getKey());
         setState(() {});
       });
     } catch (exception) {
@@ -121,7 +116,6 @@ class _ToDoPageState extends State<ToDoPage> {
                   _taskTitle = taskTitle;
                   TaskDto taskDto = TaskDto(_taskTitle, isChecked, key: newkey);
                   dataDBProvider.updateTask(taskDto);
-                  dataDBProvider.updateFolderTasks(taskDto, _folder, false);
                 });
               },
             ),
@@ -182,7 +176,6 @@ class _ToDoPageState extends State<ToDoPage> {
       _taskTitle = _textFieldEditorController.text;
       taskDto.setTitle(_taskTitle);
       dataDBProvider.updateTask(taskDto);
-      dataDBProvider.updateFolderTasks(taskDto, _folder, false);
       _setUnnamedTaskIfEmpty();
       Navigator.of(context).pop();
     });

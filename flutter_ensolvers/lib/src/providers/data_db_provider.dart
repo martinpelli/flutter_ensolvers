@@ -3,24 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
 import 'package:flutter_ensolvers/src/DTOs/task_dto.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_ensolvers/src/mappers/folder_mapper.dart';
+import 'package:flutter_ensolvers/src/mappers/task_mapper.dart';
 
 class _DataDBProvider {
   String apiAddress = 'http://localhost:4000/api/';
 
-  Future<List<FolderDto>> loadData() async {
+  Future<List<FolderDto>> getFoldersFromDB() async {
     Uri url = Uri.parse('${apiAddress}folders');
-    List<dynamic> _dataObjects = [];
-    final List<FolderDto> _foldersDTO = [];
     final http.Response _response = await http.get(url);
     Map dataMap = json.decode(_response.body);
-    _dataObjects = dataMap['folders'];
-    for (var folderObject in _dataObjects) {
-      FolderDto _newFolderDto = FolderDto(
-          folderObject['title'], folderObject['tasks'],
-          key: Key(folderObject['_id']));
-      _foldersDTO.add(_newFolderDto);
-    }
-    return _foldersDTO;
+    return FolderMapper.fromFolderModelToFolderDTO(dataMap);
+  }
+
+  Future<List<TaskDto>> getTasksFromDB(String folderKey) async {
+    final String folderId = folderKey.replaceAll(RegExp(r'[^\w\s]+'), '');
+
+    Uri url = Uri.parse('${apiAddress}folders/gettasks/$folderId');
+    final http.Response _response = await http.get(url);
+    Map dataMap = json.decode(_response.body);
+    return TaskMapper.fromTaskModelToTaskDTO(dataMap);
   }
 
   Future<String> addFolderToDB(FolderDto folderDto) async {
@@ -39,9 +41,8 @@ class _DataDBProvider {
     }
   }
 
-  Future<String> addTaskToDB(TaskDto taskDto, Key folderKey) async {
-    final String folderId =
-        folderKey.toString().replaceAll(RegExp(r'[^\w\s]+'), '');
+  Future<String> addTaskToDB(TaskDto taskDto, String folderKey) async {
+    final String folderId = folderKey.replaceAll(RegExp(r'[^\w\s]+'), '');
     Uri url = Uri.parse('${apiAddress}tasks/create/$folderId');
     var _body = json.encode({
       'title': taskDto.getTaskTitle(),
@@ -54,32 +55,6 @@ class _DataDBProvider {
       return (dataMap['task']['_id']);
     } else {
       throw Exception('Error while trying to add task to database');
-    }
-  }
-
-  Future<void> updateFolderTasks(
-      TaskDto task, FolderDto folder, bool isNewTask) async {
-    Uri url = Uri.parse('${apiAddress}folders/modify');
-    final String id =
-        task.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), '');
-    final List tasks = folder.getTasks();
-    if (!isNewTask) {
-      tasks.removeAt(tasks.indexWhere((_task) => _task['key'] == id));
-    }
-    tasks.add({
-      'title': task.getTaskTitle(),
-      'checked': task.getIsChecked(),
-      'key': id
-    });
-
-    var _body = json.encode({
-      '_id': folder.getKey().toString().replaceAll(RegExp(r'[^\w\s]+'), ''),
-      'tasks': tasks
-    });
-    final http.Response _response = await http.put(url,
-        headers: {'Content-Type': 'application/json'}, body: _body);
-    if (_response.statusCode != 200) {
-      throw Exception('Error while trying to upadate folder to database');
     }
   }
 
@@ -117,18 +92,6 @@ class _DataDBProvider {
         headers: {'Content-Type': 'application/json'}, body: _body);
     if (_response.statusCode != 200) {
       throw Exception('Error while trying to update task to database');
-    }
-  }
-
-  Future<void> addIdTaskToFolder(String taskId, Key folderKey) async {
-    final String folderId =
-        folderKey.toString().replaceAll(RegExp(r'[^\w\s]+'), '');
-    Uri url = Uri.parse('${apiAddress}folders/addtask/$folderId');
-    var _body = json.encode({'taskId': taskId});
-    final http.Response _response = await http.put(url,
-        headers: {'Content-Type': 'application/json'}, body: _body);
-    if (_response.statusCode != 200) {
-      throw Exception('Error while trying to add task to folder in database');
     }
   }
 }

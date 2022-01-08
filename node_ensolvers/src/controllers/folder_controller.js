@@ -1,4 +1,4 @@
-const folderService = require('../services/folder_service');
+const  folderService = require('../services/folder_service');
 
 const getFolders = async(req, res) => {
     res.json({
@@ -12,6 +12,10 @@ const createFolder = async(req, res) =>{
     });
 }
 
+const getTasksFromFolder = async(req, res) =>{
+    res.json({
+            tasks: await folderService.getTasksFromFolder(req.params.id)});
+}
 
 const deleteFolder = async(req, res) =>{
     res.json({
@@ -32,4 +36,4 @@ const modifyFolder = async(req, res) =>{
 }
 
 
-module.exports = {getFolders, createFolder, deleteFolder, deleteFolders, modifyFolder};
+module.exports = {getFolders, createFolder, deleteFolder, deleteFolders, modifyFolder, getTasksFromFolder};

@@ -10,6 +10,8 @@ router.delete('/api/tasks/delete/:id', deleteTask);
 
 router.delete('/api/tasks/delete/', deleteTasksInFolder);
 
+router.delete('/api/tasks/deleteAll/', deleteTasks);
+
 router.put('/api/tasks/modify', modifyTask);
 
 module.exports = router;

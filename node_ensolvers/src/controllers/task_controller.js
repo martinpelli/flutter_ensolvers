@@ -7,7 +7,6 @@ const getTasks = async(req, res) => {
 }
 
 const createTask = async(req, res) =>{
-    console.log(req.body);
     res.json({
         task: await taskService.createTask(req.params.id,req.body)
     });
