@@ -16,10 +16,7 @@ class FolderService{
         try{
             return await folderModel.findById(folderId).then( async (tasksIds)  => {
                 if(tasksIds['tasks'].length > 0){
-                    var newTasksIds = [tasksIds['tasks'].length];
-                    for(var i = 0; i < tasksIds['tasks'].length; i++){
-                        newTasksIds[i] = tasksIds['tasks'][i].toString();
-                    }
+                    var newTasksIds = this.castObjectIdToIds(tasksIds['tasks']);
                     return await taskModel.find({ '_id': { $in: newTasksIds } });
                 }else{
                     return [];
@@ -49,8 +46,10 @@ class FolderService{
         try{
             await folderModel.findOneAndRemove({
                 _id: idc
-            }).then((value) => {
-                deletedFolder = value;
+            }).then(async (folder) => {
+                deletedFolder = folder;
+                var tasksIds = this.castObjectIdToIds(folder['tasks']);
+                await taskModel.deleteMany({ '_id': { $in: tasksIds } });
             });
             return deletedFolder;
         }catch(error){
@@ -78,6 +77,14 @@ class FolderService{
         }catch (error){
             console.log(error);
         }
+    }
+
+    castObjectIdToIds(tasks){
+        var newTasksIds = [tasks.length];
+        for(var i = 0; i < tasks.length; i++){
+            newTasksIds[i] = tasks[i].toString();
+        }
+        return newTasksIds;
     }
 
 }

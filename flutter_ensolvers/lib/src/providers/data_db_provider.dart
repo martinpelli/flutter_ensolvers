@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
 import 'package:flutter_ensolvers/src/DTOs/task_dto.dart';
 import 'package:http/http.dart' as http;
@@ -18,7 +17,6 @@ class _DataDBProvider {
 
   Future<List<TaskDto>> getTasksFromDB(String folderKey) async {
     final String folderId = folderKey.replaceAll(RegExp(r'[^\w\s]+'), '');
-
     Uri url = Uri.parse('${apiAddress}folders/gettasks/$folderId');
     final http.Response _response = await http.get(url);
     Map dataMap = json.decode(_response.body);
@@ -72,8 +70,8 @@ class _DataDBProvider {
     }
   }
 
-  Future<void> deleteElement(String id, String element) async {
-    Uri url = Uri.parse('${apiAddress}' + element + '/delete/$id');
+  Future<void> deleteFolder(String folderId) async {
+    Uri url = Uri.parse('${apiAddress}folders/delete/$folderId');
     final http.Response _response =
         await http.delete(url, headers: {'Content-Type': 'application/json'});
     if (_response.statusCode != 200) {
@@ -81,17 +79,14 @@ class _DataDBProvider {
     }
   }
 
-  Future<void> deleteTasksInFolder(List tasks) async {
-    Uri url = Uri.parse('${apiAddress}tasks/delete/');
-    final List tasksIds = [];
-    for (var task in tasks) {
-      tasksIds.add(task['key']);
-    }
-    var _body = json.encode({'tasksIds': tasksIds});
-    final http.Response _response = await http.delete(url,
-        headers: {'Content-Type': 'application/json'}, body: _body);
+  Future<void> deleteTask(String taskId, String folderId) async {
+    taskId = taskId.replaceAll(RegExp(r'[^\w\s]+'), '');
+    folderId = folderId.replaceAll(RegExp(r'[^\w\s]+'), '');
+    Uri url = Uri.parse('${apiAddress}tasks/delete/$taskId/$folderId');
+    final http.Response _response =
+        await http.delete(url, headers: {'Content-Type': 'application/json'});
     if (_response.statusCode != 200) {
-      throw Exception('Error while trying to update task to database');
+      throw Exception('Error while trying to delete task to database');
     }
   }
 }

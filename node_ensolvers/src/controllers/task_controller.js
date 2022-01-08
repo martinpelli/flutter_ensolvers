@@ -14,7 +14,7 @@ const createTask = async(req, res) =>{
 
 const deleteTask = async(req, res) =>{
     res.json({
-        task: await taskService.deleteTask(req.params.id)
+        task: await taskService.deleteTask(req.params.taskid,req.params.folderid)
     });
 }
 

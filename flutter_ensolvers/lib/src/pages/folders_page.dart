@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_ensolvers/src/DTOs/folder_dto.dart';
@@ -98,9 +96,8 @@ class _FoldersPageState extends State<FoldersPage> {
   void _onDeleteFolderClicked(BuildContext context, Key newKey) {
     setState(() {
       _foldersList.removeWhere((element) => element.key == newKey);
-      dataDBProvider.deleteElement(
-          newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''), 'folders');
-      dataDBProvider.deleteTasksInFolder(_newFolderDTO.getTasks());
+      dataDBProvider
+          .deleteFolder(newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''));
     });
   }
 

@@ -165,8 +165,7 @@ class _ToDoPageState extends State<ToDoPage> {
     setState(() {
       _tasksList.removeWhere((element) => element.key == newKey);
       Navigator.of(context).pop();
-      dataDBProvider.deleteElement(
-          newKey.toString().replaceAll(RegExp(r'[^\w\s]+'), ''), 'tasks');
+      dataDBProvider.deleteTask(newKey.toString(), _folderId);
     });
   }
 

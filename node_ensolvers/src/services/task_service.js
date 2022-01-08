@@ -1,4 +1,3 @@
-const  mongoose  = require('mongoose');
 var folderModel =  require('../models/Folder');
 var taskModel = require('../models/Task');
 
@@ -39,13 +38,17 @@ class TaskService{
     }
 
 
-    async deleteTask(idc){
+    async deleteTask(taskId, folderId){
         var deletedTask;
         try{
             await taskModel.findOneAndRemove({
-                _id: idc
-            }).then((value) => {
+                _id: taskId
+            }).then(async (value) => {
                 deletedTask = value;
+                await folderModel.findByIdAndUpdate(
+                    {'_id': folderId}, 
+                    {'$pull': {'tasks': taskId}
+                })
             });
             return deletedTask;
         }catch(error){
