@@ -37,6 +37,25 @@
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
   <script>
+    // Import the functions you need from the SDKs you need
+  import { initializeApp } from "firebase/app";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDr60qyRxhbiAotlHKgSHeijc3cHZzIUrA",
+    authDomain: "ensolvers-app.firebaseapp.com",
+    projectId: "ensolvers-app",
+    storageBucket: "ensolvers-app.appspot.com",
+    messagingSenderId: "984800451029",
+    appId: "1:984800451029:web:e1c0a5beb924b2faacc55c"
+  };
+
+// Initialize Firebase
+  initializeApp(firebaseConfig);
+  </script>
+  <script>
     var serviceWorkerVersion = null;
     var scriptLoaded = false;
     function loadMainDartJs() {
