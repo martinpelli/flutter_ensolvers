@@ -83,9 +83,9 @@ class _ToDoPageState extends State<ToDoPage> {
   }
 
   void _createNewTask() {
-    _setUnnamedTaskIfEmpty();
     try {
       _taskTitle = _textFieldCreatorController.text;
+      _setUnnamedTaskIfEmpty();
       TaskDto _newTaskDTO = TaskDto(_taskTitle, false);
       dataDBProvider.addTaskToDB(_newTaskDTO, _folderId).then((taskId) {
         _tasksList.add(_newTask(Key(taskId), _newTaskDTO.getTaskTitle(),

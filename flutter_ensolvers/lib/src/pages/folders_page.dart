@@ -61,9 +61,9 @@ class _FoldersPageState extends State<FoldersPage> {
   }
 
   void _createNewFolder(BuildContext context) {
-    _setUnnamedFolderIfEmpty();
     try {
       _folderTitle = _textFieldCreatorController.text;
+      _setUnnamedFolderIfEmpty();
       _newFolderDTO = FolderDto(_folderTitle, []);
       dataDBProvider.addFolderToDB(_newFolderDTO).then((id) {
         _foldersList.add(_newFolder(context, Key(id),
