@@ -31,6 +31,6 @@ I didn't have enough time to upload the app and the DB. So it´s only working if
 - After trying everything, I was able to solve the problem by myself as I dind´t find nothing useful on Internet, now the database  complies with Normal Forms
 - Deployed the app on the web and DB is now in remote at MongoDB Atlass
 
-**To execute the app just run executeApp.bat (node has to be installed to run the API**
+**To execute the app just run executeApp.bat (node has to be installed to run the API)**
 
 
