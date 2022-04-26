@@ -21,15 +21,7 @@ will remove all the tasks belonging to it
 - As a user, I want to be able to navigate to the item list inside a folder and manipulate the
 items using the same UI implemented in Phase 1
 
-Problems: [FIXED] (see [Updated])
 
-I spent like 8 hs to only trying to fix an error with mongoose that didn't let me use two models, so the database is inconsistent, redundant. Instead of saving the tasks in folders, I would have been like to only save the tasks id, but at least is working. 
-I didn't have enough time to upload the app and the DB. So it´s only working if you clone the repo and make the proper installs.
-
-[Updated] (two days after the delivery)
-
-- After trying everything, I was able to solve the problem by myself as I dind´t find nothing useful on Internet, now the database  complies with Normal Forms
-- Deployed the app on the web and DB is now in remote at MongoDB Atlass
 
 **To execute the app just run executeApp.bat (node has to be installed to run the API)**
 
